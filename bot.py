@@ -59,21 +59,6 @@ class LoggingBot(commands.Bot):
         await interaction.response.send_message(responsestr)
 
 
-    async def get_logs_from_day(self, interaction: discord.Interaction, year: str, month: str, day: str):
-        """
-        get logs
-        """
-        is_admin = discord.utils.get(interaction.guild.roles, name='admin')
-        if is_admin in interaction.user.roles:
-            file_path = os.path.join('logs', f'{year}-{month}-{day}_logs.csv')
-            with open(file_path) as f:
-                user_name = interaction.user.name
-                file_to_send = discord.File(f, f'{year}-{month}-{day}_logs.csv')
-                await interaction.response.send_message(f"Logs requested from: {user_name}", file=file_to_send)
-        else:
-            await interaction.response.send_message(f'Cannot execute command (dont have specific role)')
-            return
-
     async def on_message(self, message):
 
         if message.author == self.user:
