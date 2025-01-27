@@ -46,6 +46,7 @@ class LoggingBot(commands.Bot):
                 
 
         if not is_admin in interaction.user.roles:
+            await interaction.response.send_message("Invalid permissions")
             return
 
         rows = await self.__sql.get_query_by_name(user_name)
