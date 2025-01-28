@@ -65,3 +65,11 @@ class Database:
         except sqlite3.Error as e:
             self.__connection.rollback()
             logger.error(f'{self.save_message.__name__}: {e}')
+
+    def update_removed_user(self, _id: int):
+        try:
+            self.__db.execute('UPDATE users SET present = 0 WHERE id = ?',(_id,))
+            self.__connection.commit()
+        except sqlite3.Error as e:
+            self.__connection.rollback()
+            logger.error(f'{self.save_message.__name__}: {e}')

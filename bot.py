@@ -89,6 +89,15 @@ class LoggingBot(commands.Bot):
             1
         )
 
+    async def on_member_remove(self, member):
+
+        if member == self.user:
+            return
+
+        await self.__sql.update_removed_user(
+            member.id
+        )
+
     async def download_attachment(self, attachment, message_id) -> str:
 
         async with aiohttp.ClientSession() as session:
