@@ -1,6 +1,6 @@
 import os
 import sqlite3
-import logging
+from . import logger
 
 class Database:
 
@@ -13,13 +13,7 @@ class Database:
         if not os.path.exists(self.__attachments_directory):
             os.makedirs(self.__attachments_directory)
 
-        #setup logging
-        logging.basicConfig(
-            filename='database.log',
-            format='%(lavelname)s: %(asctime)s: %(messege)s',
-            datefmt='%d-%m-%Y %H:%M:%S')
-
-        self.__connection = sqlite3.connect(_filename)
+        self.__connection = sqlite3.connect(os.path.join(self.__database_file_directory, _filename))
         self.__db = self.__connection.cursor()
         #table for messeges
         self.__db.execute('''
@@ -38,6 +32,7 @@ class Database:
         CREATE TABLE IF NOT EXISTS users (
         id INT UNIQUE,
         name TEXT NOT NULL,
+        phonenumber INT NOT NULL,
         jointime TEXT NOT NULL,
         present INT NOT NULL CHECK (present in (0,1))
         )
@@ -48,19 +43,18 @@ class Database:
 
     async def save_message(self, _id: int, _guild: str, _channel: str, _username: str, _creationtime: str, _attachment: str, _content: str):
         try:
-            self.__db.execute('INSERT INTO messeges (id, guild, channel, username, creationtime, attachment, content) VALUES (?,?,?,?,?,?,?)', 
+            self.__db.execute('INSERT INTO messages (id, guild, channel, username, creationtime, attachment, content) VALUES (?,?,?,?,?,?,?)', 
             (_id, _guild, _channel, _username, _creationtime, _attachment, _content))
             self.__connection.commit()
         except sqlite3.Error as e:
             self.__connection.rollback()
-            logging.error(f'{self.save_message.__name__}: {e}')
+            logger.error(f'{self.save_message.__name__}: {e}')
 
-    async def get_query_by_name(self, _name) -> list:
+    def get_query_by_name(self, _name) -> list:
         try:
-            self.__db.execute('SELECT * FROM messages WHERE username=?', (_name))
+            self.__db.execute('''SELECT * FROM messages WHERE username = ?''', (_name,))
+            return self.__db.fetchall()
         except sqlite3.Error as e:
             self.__connection.rollback()
-            logging.error(f'{self.save_message.__name__}: {e}')
-        finally:
-            return self.__db.fetchall()
+            logger.error(f'{self.save_message.__name__}: {e}')
 

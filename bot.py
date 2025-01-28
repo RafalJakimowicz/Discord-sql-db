@@ -1,10 +1,10 @@
 import os
 import aiohttp
 import discord
-import logging
 from discord import app_commands
 from discord.ext import commands
 from databasemodule import Database
+from databasemodule import logger
 
 
 class LoggingBot(commands.Bot):
@@ -14,10 +14,6 @@ class LoggingBot(commands.Bot):
         self.command_list = []
         self.commands_setup()
 
-        logging.basicConfig(
-            filename='bot.log',
-            format='%(lavelname)s: %(asctime)s: %(messege)s',
-            datefmt='%d-%m-%Y %H:%M:%S')
 
     def commands_setup(self):
         self.command_list = [
@@ -34,22 +30,22 @@ class LoggingBot(commands.Bot):
         await self.tree.sync()
 
     async def on_ready(self):
-        print(f'>>Logged in as {self.user.name} (ID: {self.user.id})<<')
+        print(f'Logged in as {self.user.name} (ID: {self.user.id})')
+        logger.info(f'Logged in as {self.user.name} (ID: {self.user.id})')
 
     async def get_logs_by_name(self, interaction: discord.Interaction, user_name: str):
         is_admin = False
-        
         for role in interaction.guild.roles:
-            if discord.Permissions.administrator in role.permissions:
+            if role.permissions.administrator:
                 is_admin = True
                 break
                 
 
-        if not is_admin in interaction.user.roles:
+        if not is_admin:
             await interaction.response.send_message("Invalid permissions")
             return
 
-        rows = await self.__sql.get_query_by_name(user_name)
+        rows = self.__sql.get_query_by_name(user_name)
 
         responsestr = ''
         for row in rows:
@@ -67,9 +63,9 @@ class LoggingBot(commands.Bot):
         
         attachment_file_name = ''
         for attachment in message.attachments:
-            attachment_file_name = await self.download_image(attachment, message.id)
+            attachment_file_name = await self.download_attachment(attachment, message.id)
         
-        self.__sql.save_message(
+        await self.__sql.save_message(
             message.id, 
             message.guild.name, 
             message.channel.name,
@@ -89,9 +85,9 @@ class LoggingBot(commands.Bot):
                     with open(file_path, 'wb') as im_file:
                         im_file.write(await response.read())
 
-                    logging.info(f"saved {file_path}")
+                    logger.info(f"saved {file_path}")
                 else:
-                    logging.error(f'{self.download_attachment.__name__} {response.status} {file_path}')
+                    logger.error(f'{self.download_attachment.__name__} {response.status} {file_path}')
         
         return file_path
 
