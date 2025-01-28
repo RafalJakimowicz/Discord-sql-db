@@ -32,7 +32,6 @@ class Database:
         CREATE TABLE IF NOT EXISTS users (
         id INT UNIQUE,
         name TEXT NOT NULL,
-        phonenumber INT NOT NULL,
         jointime TEXT NOT NULL,
         present INT NOT NULL CHECK (present in (0,1))
         )
@@ -58,3 +57,11 @@ class Database:
             self.__connection.rollback()
             logger.error(f'{self.save_message.__name__}: {e}')
 
+    def save_user(self, _id: int, _name: str, _jointime: str, _present: int):
+        try:
+            self.__db.execute('INSERT INTO users (id, name, jointime, present) VALUES (?,?,?,?)', 
+            (_id, _name, _jointime, _present))
+            self.__connection.commit()
+        except sqlite3.Error as e:
+            self.__connection.rollback()
+            logger.error(f'{self.save_message.__name__}: {e}')

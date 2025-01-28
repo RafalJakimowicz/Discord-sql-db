@@ -1,6 +1,7 @@
 import os
 import aiohttp
 import discord
+from datetime import datetime
 from discord import app_commands
 from discord.ext import commands
 from databasemodule import Database
@@ -70,11 +71,23 @@ class LoggingBot(commands.Bot):
             message.guild.name, 
             message.channel.name,
             message.author.name,
-            message.created_at.date(),
+            str(datetime.now().strftime("%Y-%m-%d %H:%M:%S")),
             attachment_file_name,
             message.content)
         
         await self.process_commands(message)
+
+    async def on_member_join(self, member):
+
+        if member == self.user:
+            return
+
+        await self.__sql.save_user(
+            member.id,
+            member.name,
+            str(datetime.now().strftime("%Y-%m-%d %H:%M:%S")),
+            1
+        )
 
     async def download_attachment(self, attachment, message_id) -> str:
 
