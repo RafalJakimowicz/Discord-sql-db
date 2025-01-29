@@ -18,7 +18,7 @@ class Database:
         #table for messeges
         self.__db.execute('''
         CREATE TABLE IF NOT EXISTS messages (
-        id INT,
+        id INT UNIQUE,
         guild TEXT NOT NULL,
         channel TEXT NOT NULL,
         username TEXT NOT NULL,
@@ -32,13 +32,14 @@ class Database:
         id INT UNIQUE,
         name TEXT NOT NULL,
         jointime TEXT NOT NULL,
-        present INT NOT NULL CHECK (present in (0,1)))
+        present INT NOT NULL)
         ''')
+        self.__connection.commit()
 
     def attachment_path(self) -> str:
         return self.__attachments_directory
 
-    async def save_message(self, _id: int, _guild: str, _channel: str, _username: str, _creationtime: str, _attachment: str, _content: str):
+    def save_message(self, _id: int, _guild: str, _channel: str, _username: str, _creationtime: str, _attachment: str, _content: str):
         from . import logger
         try:
             self.__db.execute('INSERT INTO messages (id, guild, channel, username, creationtime, attachment, content) VALUES (?,?,?,?,?,?,?)', 
@@ -62,6 +63,7 @@ class Database:
         try:
             self.__db.execute('INSERT INTO users (id, name, jointime, present) VALUES (?,?,?,?)', 
             (_id, _name, _jointime, _present))
+            
             self.__connection.commit()
         except sqlite3.Error as e:
             self.__connection.rollback()
@@ -81,7 +83,7 @@ class Database:
         try:
             if not _table.isidentifier():
                 raise sqlite3.Error('Incorect input')
-                
+
             self.__db.execute(f'SELECT * FROM {_table}')
             return self.__db.fetchall()
         except sqlite3.Error as e:

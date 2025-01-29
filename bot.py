@@ -1,6 +1,5 @@
 import os
 import io
-import csv
 import aiohttp
 import discord
 from datetime import datetime
@@ -17,6 +16,15 @@ class LoggingBot(commands.Bot):
         self.command_list = []
         self.commands_setup()
 
+    def users_db_setup(self):
+        for guild in self.guilds:
+            for member in guild.members:
+                self.__sql.save_user(
+                    member.id,
+                    member.name,
+                    str(datetime.now().strftime("%Y-%m-%d %H:%M:%S")),
+                    1
+                )
 
     def commands_setup(self):
         self.command_list = [
@@ -29,6 +37,11 @@ class LoggingBot(commands.Bot):
                 name='export_messages_database',
                 description='export database of messeges to csv file',
                 callback=self.export_database_of_messages_to_csv
+            ),
+            app_commands.Command(
+                name='export_users_database',
+                description='export database of users to csv file',
+                callback=self.export_database_of_users_to_csv
             )
         ]
 
@@ -39,7 +52,40 @@ class LoggingBot(commands.Bot):
 
     async def on_ready(self):
         print(f'Logged in as {self.user.name} (ID: {self.user.id})')
+        self.users_db_setup()
         logger.info(f'Logged in as {self.user.name} (ID: {self.user.id})')
+
+    async def export_database_of_users_to_csv(self, interaction: discord.Interaction):
+        is_admin = False
+        for role in interaction.guild.roles:
+            if role.permissions.administrator:
+                is_admin = True
+                break
+
+        if not is_admin:
+            await interaction.response.send_message("Invalid permissions")
+            return 
+
+        csvFile = io.StringIO()
+
+        dbResponse = self.__sql.export_database('users')
+        for row in dbResponse:
+            for collumn in row:
+                csvFile.write(f'{collumn},')
+            csvFile.write('\n')
+        
+        csvFile.seek(0)
+        attachment_file = discord.File(csvFile, filename="response.csv")
+
+        embedMessege = discord.Embed(
+            title="Database response",
+            description=f'responde from users table',
+            color=discord.Color.from_rgb(46, 255, 137)
+        )
+
+        await interaction.response.send_message(embed=embedMessege, file=attachment_file, ephemeral=True)
+        
+        csvFile.close()
 
     async def export_database_of_messages_to_csv(self, interaction: discord.Interaction):
         is_admin = False
@@ -55,14 +101,13 @@ class LoggingBot(commands.Bot):
         csvFile = io.StringIO()
 
         dbResponse = self.__sql.export_database('messages')
-        
+
         for row in dbResponse:
             for collumn in row:
                 csvFile.write(f'{collumn},')
             csvFile.write('\n')
         
         csvFile.seek(0)
-
         attachment_file = discord.File(csvFile, filename="response.csv")
 
         embedMessege = discord.Embed(
@@ -93,7 +138,7 @@ class LoggingBot(commands.Bot):
         responsestr = ''
         for row in rows:
             for item in row:
-                responsestr = responsestr + str(item) + "    "
+                responsestr = responsestr + str(item) + ","
             responsestr = responsestr + '\n'
 
         embedMessege = discord.Embed(
@@ -114,7 +159,7 @@ class LoggingBot(commands.Bot):
         for attachment in message.attachments:
             attachment_file_name = await self.download_attachment(attachment, message.id)
         
-        await self.__sql.save_message(
+        self.__sql.save_message(
             message.id, 
             message.guild.name, 
             message.channel.name,
