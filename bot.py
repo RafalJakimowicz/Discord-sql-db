@@ -1,4 +1,6 @@
 import os
+import io
+import csv
 import aiohttp
 import discord
 from datetime import datetime
@@ -22,6 +24,11 @@ class LoggingBot(commands.Bot):
                 name='select_by_name',
                 description='select logs from database by user',
                 callback=self.get_logs_by_name
+            ),
+            app_commands.Command(
+                name='export_messages_database',
+                description='export database of messeges to csv file',
+                callback=self.export_database_of_messages_to_csv
             )
         ]
 
@@ -33,6 +40,41 @@ class LoggingBot(commands.Bot):
     async def on_ready(self):
         print(f'Logged in as {self.user.name} (ID: {self.user.id})')
         logger.info(f'Logged in as {self.user.name} (ID: {self.user.id})')
+
+    async def export_database_of_messages_to_csv(self, interaction: discord.Interaction):
+        is_admin = False
+        for role in interaction.guild.roles:
+            if role.permissions.administrator:
+                is_admin = True
+                break
+
+        if not is_admin:
+            await interaction.response.send_message("Invalid permissions")
+            return 
+
+        csvFile = io.StringIO()
+
+        dbResponse = self.__sql.export_database('messages')
+        
+        for row in dbResponse:
+            for collumn in row:
+                csvFile.write(f'{collumn},')
+            csvFile.write('\n')
+        
+        csvFile.seek(0)
+
+        attachment_file = discord.File(csvFile, filename="response.csv")
+
+        embedMessege = discord.Embed(
+            title="Database response",
+            description=f'responde from messeges table',
+            color=discord.Color.from_rgb(46, 255, 137)
+        )
+
+        await interaction.response.send_message(embed=embedMessege, file=attachment_file, ephemeral=True)
+        
+        csvFile.close()
+
 
     async def get_logs_by_name(self, interaction: discord.Interaction, user_name: str):
         is_admin = False
@@ -53,8 +95,14 @@ class LoggingBot(commands.Bot):
             for item in row:
                 responsestr = responsestr + str(item) + "    "
             responsestr = responsestr + '\n'
-        
-        await interaction.response.send_message(responsestr)
+
+        embedMessege = discord.Embed(
+            title="Database response",
+            description=responsestr,
+            color=discord.Color.from_rgb(46, 255, 137)
+        )
+
+        await interaction.response.send_message(embed=embedMessege, ephemeral=True)
 
 
     async def on_message(self, message):

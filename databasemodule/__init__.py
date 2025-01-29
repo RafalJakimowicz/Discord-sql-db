@@ -1,6 +1,8 @@
 from .database import *
 import logging
 
+__all__ = ['Database']
+
 logging.basicConfig(
     filename="logs.log",
     level=logging.INFO,
@@ -9,4 +11,3 @@ logging.basicConfig(
 
 # Get the root logger
 logger = logging.getLogger(__name__)
-__all__ = ['Database']
