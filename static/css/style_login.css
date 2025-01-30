@@ -1,0 +1,54 @@
+body {
+    font-family: Arial, sans-serif;
+    text-align: center;
+    background-color: rgb(50,50,50);
+}
+
+.mainContainer{
+    display: grid;
+    place-items: center;
+    height: 100vh;
+    background-color: rgb(50,50,50);
+}
+
+.formHolder {
+    background-color: rgb(30,30,30);
+    width: 50vh;
+    margin: 0 auto;
+    height: 45vh; /* Full viewport height */
+    text-align: center;
+    border-radius: 10%;
+}
+
+#loggingForm {
+    color: #ffffff;
+    display: flex;
+    gap: 15px;
+    flex-direction: column;
+    align-items: center;
+    padding: 5vh;
+}
+
+form input {
+    background-color: rgb(75,75,75);
+    color:#ffffff;
+    width: 80%;
+    font-size: 24px;
+    border-radius: 1vh;
+    border: 2px solid #ccc;
+}
+
+form button {
+    background-color: rgb(75,75,75);
+    color:#ffffff;
+    width: 40%;
+    height: 20%;
+    font-size: 24px;
+    border-radius: 1vh;
+    border: 2px solid #ccc;
+}
+
+input:focus {
+    border: 2px solid #ffffff;  /* Keeps the same border on focus */
+    outline: none;           /* Prevents browser highlight */
+}

@@ -5,14 +5,14 @@ import discord
 from datetime import datetime
 from discord import app_commands
 from discord.ext import commands
-from databasemodule import Database
 from databasemodule import logger
+from databasemodule import BotEndpoint
 
 
 class LoggingBot(commands.Bot):
     def __init__(self, command_prefix, intents):
         super().__init__(command_prefix=command_prefix, intents=intents)
-        self.__sql = Database('database.db')
+        self.__sql = BotEndpoint()
         self.command_list = []
         self.commands_setup()
 

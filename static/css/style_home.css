@@ -1,0 +1,39 @@
+body {
+    font-family: Arial, sans-serif;
+    color: #ffffff;
+    background-color: rgb(55,55,55);
+}
+
+.mainContainer{
+    display: grid;
+    place-items: center;
+    height: 100vh;
+    background-color: rgb(50,50,50);
+}
+
+.headerDiv {
+    background-color: rgb(50,50,50);
+    display: flex;  /* Enables flexbox */
+    align-items: center;  /* Aligns items vertically */
+    gap: 10px; 
+    width: 100%;
+    padding-inline: 1%;
+    box-sizing: border-box;
+}
+
+.loggingItems{
+    margin-left: auto;  /* Pushes the right-side items to the end */
+    display: flex;
+    gap: 10px;
+}
+
+#logout-icon {
+    width: 30px;
+    height: auto;
+    filter: invert(100%) brightness(100%);
+}
+
+#logout-icon:hover {
+    filter: invert(70%) brightness(100%);
+}
+

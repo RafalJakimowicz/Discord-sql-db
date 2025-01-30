@@ -1,0 +1,23 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Home</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/style_home.css') }}">
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <script src="{{ url_for('static', filename='js/script_home.js') }}"></script>
+</head>
+<body>
+    <div class="headerDiv">
+        <div class="headerItems">
+            <h2>
+                Logging bot administration panel
+            </h2>
+        </div>
+        <div class="loggingItems">
+            <h2>Logged as: {{ username }}</h2>
+            <img src="{{ url_for('static', filename='images/cross.svg') }}" id="logout-icon" class="icon" alt="Logout Icon">
+        </div>
+    </div>
+</body>
+</html>
