@@ -19,5 +19,64 @@
             <img src="{{ url_for('static', filename='images/cross.svg') }}" id="logout-icon" class="icon" alt="Logout Icon">
         </div>
     </div>
+    <div class="panelDiv">
+        <input type="text" id="commandsInput" placeholder="...">
+        <div class="tabs">
+            <button class="tab-btn active" data-tab="tab1">messeges</button>
+            <button class="tab-btn" data-tab="tab2">users</button>
+            <button class="tab-btn" data-tab="tab3">admins</button>
+        </div>
+        <div class="tab-content">
+            <div class="tab-pane active" id="tab1">
+                <h2>messeges</h2>
+                <table id="table1" border="1">
+                    <thead>
+                        <tr>
+                            <th>id</th>
+                            <th>guild</th>
+                            <th>channel</th>
+                            <th>username</th>
+                            <th>creationtime</th>
+                            <th>attachment</th>
+                            <th>content</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+
+                    </tbody>
+                </table>
+            </div>
+            <div class="tab-pane" id="tab2">
+                <h2>users</h2>
+                <table id="table2" border="1">
+                    <thead>
+                        <tr>
+                            <th>id</th>
+                            <th>name</th>
+                            <th>jointime</th>
+                            <th>content</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        
+                    </tbody>
+                </table>
+            </div>
+            <div class="tab-pane" id="tab3">
+                <h2>administrators</h2>
+                <table id="table3" border="1">
+                    <thead>
+                        <tr>
+                            <th>username</th>
+                            <th>password</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
 </body>
 </html>

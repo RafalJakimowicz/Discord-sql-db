@@ -1,8 +1,9 @@
 from .database import *
 from .botendpoint import *
+from .backendendpoint import *
 import logging
 
-__all__ = ['Database', 'BotEndpoint']
+__all__ = ['Database', 'BotEndpoint', 'BackendEndpoint']
 
 logging.basicConfig(
     filename="logs.log",

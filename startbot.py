@@ -2,6 +2,10 @@ import discord
 import os
 from bot import LoggingBot
 from dotenv import load_dotenv
+from app import FlaskApp
+
+app = FlaskApp()
+app.run()
 
 load_dotenv()
 TOKEN = os.getenv('DISCORD_TOKEN')

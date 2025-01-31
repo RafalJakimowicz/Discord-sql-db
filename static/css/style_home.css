@@ -4,9 +4,10 @@ body {
     background-color: rgb(55,55,55);
 }
 
-.mainContainer{
-    display: grid;
-    place-items: center;
+.panelDiv{
+    width: auto;
+    text-align: center;
+    align-items: center;
     height: 100vh;
     background-color: rgb(50,50,50);
 }
@@ -37,3 +38,57 @@ body {
     filter: invert(70%) brightness(100%);
 }
 
+.tabs {
+    margin: 0px;
+}
+
+.tab-btn {
+    padding: 10px 20px;
+    border: none;
+    font-size: 24px;
+    cursor: pointer;
+    border: 2px solid #ccc;
+    background: rgb(70,70,70);
+    transition: background 0.3s;
+    border-radius: 5px;
+}
+
+.tab-btn.active {
+    background:rgb(100,100,100);
+    color: white;
+}
+
+.tab-content {
+    margin-top: 0px;
+    border-collapse: collapse;
+}
+
+.tab-pane {
+    display: none;
+    padding: 10px 5px;
+    border: 1px solid #ddd;
+    border-radius: 5px;
+    background: rgb(60,60,60);
+}
+
+.tab-pane.active {
+    display: block;
+}
+
+th td {
+    padding: 10px;
+}
+
+th {
+    text-transform: uppercase;
+}
+
+td {
+    width: 10%;
+    word-wrap: break-word;
+}
+
+#commandsInput {
+    font-size: 24px;
+    width: 80%;
+}

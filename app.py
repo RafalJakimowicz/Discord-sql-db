@@ -3,6 +3,7 @@ import threading
 import os
 from dotenv import load_dotenv
 from werkzeug.serving import make_server
+from databasemodule import BackendEndpoint
 
 
 class FlaskApp:
@@ -10,14 +11,41 @@ class FlaskApp:
         self.app = Flask(__name__)
         self.app.secret_key = "supersecretkey"  # Needed for session management
         #self.user_manager = UserManager()
-
+        self.__sql = BackendEndpoint()
         # Define Routes
         self.app.add_url_rule("/", "home", self.home)
         self.app.add_url_rule("/login", "login", self.login, methods=["GET", "POST"])
         self.app.add_url_rule("/logout", "logout", self.logout)
+        self.app.add_url_rule("/fetch_data/", "fetch_data", self.fetch_data, methods=["GET"])
+        self.app.add_url_rule("/admin_query/", "admin_query", self.admin_query, methods=["GET"])
         load_dotenv()
         self.__admin_pass = os.getenv('ADMIN_FLASK_PASS')
         self.__admin_user_name = os.getenv('ADMIN_FLASK_USER_NAME')
+
+    def admin_query(self):
+        pass
+
+    def fetch_data(self):
+        tab = request.args.get("tab", "tab1")
+
+        try:
+            if tab == "tab1":
+                data = self.__sql.get_messages_table()
+                if not isinstance(data, list):
+                    raise TypeError("Database function must return a list")
+                return jsonify(data)
+
+            elif tab == "tab2":
+                data = self.__sql.get_users_table()
+                if not isinstance(data, list):
+                    raise TypeError("Database function must return a list")
+                return jsonify(data)
+
+            return jsonify({"error": "Invalid tab"}), 400
+
+        except Exception as e:
+            print("ERROR:", str(e))  # Debug in terminal
+            return jsonify({"error": str(e)}), 500  # Return error as JSON
 
     def home(self):
         """Home page - Redirects to login if user is not logged in"""

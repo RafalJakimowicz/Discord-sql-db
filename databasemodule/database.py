@@ -14,7 +14,7 @@ class Database:
         if not os.path.exists(self.__attachments_directory):
             os.makedirs(self.__attachments_directory)
 
-        self.__connection = sqlite3.connect(os.path.join(self.__database_file_directory, self.__filename))
+        self.__connection = sqlite3.connect(os.path.join(self.__database_file_directory, self.__filename), check_same_thread=False)
         self.__db = self.__connection.cursor()
         #table for messeges
         self.__db.execute('''
